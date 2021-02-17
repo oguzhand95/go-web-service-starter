@@ -1,0 +1,21 @@
+{{define "content"}}
+<div class="content">
+    <div class="form-container-div">
+        <div class="form-block w-form">
+            <div class="brand-div"><span class="text-span">Starter Template</span></div>
+            <form id="email-form" action="/login" method="post" name="email-form" data-name="Email Form" class="form">
+                <input type="email" class="input-field-username w-input" maxlength="256" id="email" name="email" data-name="EMail" placeholder="Mail Address"  required="">
+                <input type="password" class="input-field-password w-input" maxlength="256" id="password" name="password" data-name="Password" placeholder="Password" required="">
+                <div class="button-container">
+                    <input type="submit" value="Login" data-wait="Please Wait" class="submit-button w-button">
+                </div>
+            </form>
+            {{if .hasError}}
+            <div class="w-form-fail">
+                <div>{{.errorMessage}}</div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{end}}

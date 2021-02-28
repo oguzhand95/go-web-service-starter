@@ -14,6 +14,12 @@ import (
 )
 
 func main() {
+	appConfiguration, err := configuration.NewConfiguration()
+
+	if err != nil {
+		log.Fatalf("Configuration error:\n%s", err.Error())
+	}
+
 	engine := gin.New()
 
 	engine.HTMLRender = ginview.New(goview.Config{
@@ -24,13 +30,13 @@ func main() {
 
 	engine.Static("/public", "./public")
 
-	database, err := setDatabaseConnection()
+	database, err := setDatabaseConnection(appConfiguration)
 
 	if err != nil {
-		log.Fatal("Error occurred during database connection;\n", err.Error())
+		log.Fatalf("Error occurred during database connection;\n%s", err.Error())
 	}
 
-	err = initAPI(engine, database)
+	err = initAPI(appConfiguration, engine, database)
 
 	if err != nil {
 		log.Fatal("Couldn't init routes, middlewares or other systems;\n", err.Error())
@@ -49,7 +55,7 @@ func main() {
 	}
 }
 
-func initAPI(engine *gin.Engine, database *repository.Database) error {
+func initAPI(appConfiguration *configuration.Configuration, engine *gin.Engine, database *repository.Database) error {
 	// Create Repositories
 	userRepository, err := repository.NewUserRepository(database)
 
@@ -65,7 +71,7 @@ func initAPI(engine *gin.Engine, database *repository.Database) error {
 	authController := controller.NewAuthController(authService)
 
 	// Middlewares
-	engine.Use(setSession())
+	engine.Use(setSession(appConfiguration))
 
 	// Create Routes
 	engine.POST("/login", authController.PostLogin)
@@ -82,8 +88,8 @@ func initAPI(engine *gin.Engine, database *repository.Database) error {
 	return nil
 }
 
-func setDatabaseConnection() (*repository.Database, error) {
-	database, err := repository.NewDatabase(configuration.GetDatabaseConfiguration())
+func setDatabaseConnection(appConfiguration *configuration.Configuration) (*repository.Database, error) {
+	database, err := repository.NewDatabase(appConfiguration.DatabaseConfiguration)
 
 	if err != nil {
 		return nil, err
@@ -92,7 +98,6 @@ func setDatabaseConnection() (*repository.Database, error) {
 	return database, nil
 }
 
-func setSession() gin.HandlerFunc {
-	sessionConfiguration := configuration.GetSessionConfiguration()
-	return sessions.Sessions("price.io.session", sessions.NewCookieStore([]byte(sessionConfiguration.Secret)))
+func setSession(appConfiguration *configuration.Configuration) gin.HandlerFunc {
+	return sessions.Sessions("some.session", sessions.NewCookieStore([]byte(*appConfiguration.SessionConfiguration.Secret)))
 }

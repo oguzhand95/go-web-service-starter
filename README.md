@@ -11,9 +11,26 @@ Login and Register pages has required components, however Home page only has som
 
 Build and run `src/cmd/main.go`
 
-You may need to set database environment parameters for postgresql. Please see for environment parameters: 
-`src/internal/configuration/database.go`
+Use `--help` flag to print flags
+
+```
+  -db-host string
+        postgres database host (default "localhost")
+  -db-name string
+        postgres database name (default "postgres")
+  -db-password string
+        postgres database password
+  -db-port string
+        postgres database port (default "5432")
+  -db-username string
+        postgres database username (default "postgres")
+  -session-secret string
+        session secret (default "secret")
+```
+
+`-db-password` must be provided to run!
 
 ## Screenshots
 
 ![Login Screen](https://github.com/oguzhand95/go-web-service-starter/raw/master/screenshots/login.PNG)
+![Register Screen](https://github.com/oguzhand95/go-web-service-starter/raw/master/screenshots/register.PNG)

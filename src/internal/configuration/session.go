@@ -1,9 +1,10 @@
 package configuration
 
 import (
+	"flag"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"os"
+	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 const (
@@ -11,24 +12,25 @@ const (
 )
 
 type SessionConfiguration struct {
-	Secret string `yaml:"secret" json:"secret"`
+	Secret *string `yaml:"secret" json:"secret"`
 }
 
-func NewSessionConfiguration(secret string) *SessionConfiguration {
+func (sc SessionConfiguration) Validate() error {
+	return validation.ValidateStruct(&sc,
+			validation.Field(&sc.Secret, validation.NilOrNotEmpty),
+		)
+}
+
+func NewSessionConfiguration(secret *string) *SessionConfiguration {
 	return &SessionConfiguration{
 		Secret: secret,
 	}
 }
 
 func GetSessionConfiguration() *SessionConfiguration {
-	// Might use ozzo-validation here, instead of manually checking each parameter
-	secret := os.Getenv("SESSION_SECRET")
+	sessionSecret := flag.String("session-secret", "secret", "session secret")
 
-	if secret == "" {
-		secret = "secret"
-	}
-
-	return NewSessionConfiguration(secret)
+	return NewSessionConfiguration(sessionSecret)
 }
 
 func IsAuthenticated(ctx *gin.Context) bool {

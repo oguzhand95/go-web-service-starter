@@ -42,8 +42,8 @@ func (d *Database) Close() error {
 
 func (d *Database) runPostgresql(databaseConfiguration *configuration.DatabaseConfiguration) (*gorm.DB, error) {
 	connectionString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		databaseConfiguration.Host, databaseConfiguration.Username, databaseConfiguration.Password,
-		databaseConfiguration.DatabaseName, databaseConfiguration.Port)
+		*databaseConfiguration.Host, *databaseConfiguration.Username, *databaseConfiguration.Password,
+		*databaseConfiguration.DatabaseName, *databaseConfiguration.Port)
 
 	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 

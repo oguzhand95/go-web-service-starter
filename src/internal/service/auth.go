@@ -19,7 +19,7 @@ func NewAuthService(userRepository *repository.UserRepository) *AuthService {
 
 func (as *AuthService) Login(loginRequest *request.LoginRequest) error {
 	if strings.Trim(loginRequest.Email, " ") == "" || strings.Trim(loginRequest.Password, " ") == "" {
-		return errors.New("kullanıcı adı veya parola boş olamaz")
+		return errors.New("username and password cannot be empty")
 	}
 
 	user, err := as.UserRepository.GetByFieldMail(loginRequest.Email)
@@ -38,7 +38,7 @@ func (as *AuthService) Login(loginRequest *request.LoginRequest) error {
 		return nil
 	}
 
-	return errors.New("giris sırasında hata meydana geldi")
+	return errors.New("error occurred during login")
 }
 
 func (as *AuthService) Register(registerRequest *request.RegisterRequest) error {
